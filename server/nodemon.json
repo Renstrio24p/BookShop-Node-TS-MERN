@@ -1,0 +1,8 @@
+{
+    "verbose": true,
+    "watch": ["src"],
+    "ext": "ts,json",
+    "exec": "ts-node src/index.ts",
+    "ignore": ["node_modules"]
+  }
+  

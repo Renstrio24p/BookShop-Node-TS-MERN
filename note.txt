@@ -1,0 +1,116 @@
+express type
+
+import { Request, Response } from 'express';
+
+export type Express = {
+    listen: (port: number, callback: () => void) => void;
+    get: (path: string, callback: (req: Request, res: Response) => void) => void;
+    post: (path: string, callback: (req: Request, res: Response) => void) => void;
+};
+
+save later
+
+// Routes post all books
+
+app.post('/books', async (req, res):PromiseExpress => {
+    try {
+        if (!req.body.title || 
+            !req.body.author || 
+            !req.body.publishYear
+            ) {
+            return res.status(400).send({
+                message: 'Send all required fields: title, author, and publish_year'
+            });
+        }
+
+        const newBook = {
+            title: req.body.title,
+            author: req.body.author,
+            publishYear: req.body.publishYear,
+        };
+
+        const book = await Book.create(newBook);
+
+        // Send a success response
+        res.status(201).send(book);
+    } catch (error: unknown) {
+        console.log('Something went wrong: ' + (error as Error).message);
+        res.status(500).send({ message: 'Internal Server Error' });
+    }
+});
+
+// Routes to get All books
+
+app.get('/books',async(req,res):PromiseExpress =>{
+    try {
+        const books = await Book.find({})
+        return res.status(200).json({
+            count: books.length,
+            data: books,
+        });
+    } catch(error: unknown){
+        console.log('something went wrong : ' + (error as Error).message)
+        res.status(500).send({ message: (error as Error).message})
+    }
+})
+
+// Routes to get All books by its Id
+
+app.get('/books/:id',async(req,res):PromiseExpress =>{
+    try {
+
+        const { id } = req.params;
+
+        const books = await Book.findById(id)
+        return res.status(200).json({books});
+    } catch(error: unknown){
+        console.log('something went wrong : ' + (error as Error).message)
+        res.status(500).send({ message: (error as Error).message})
+    }
+})
+
+// Route update a book
+
+app.put('/books/:id',async (req,res):PromiseExpress => {
+    try {
+        if (!req.body.title || 
+            !req.body.author || 
+            !req.body.publishYear
+            ) {
+            return res.status(400).send({
+                message: 'Send all required fields: title, author, and publish_year'
+            });
+        }
+
+        const { id } = req.params;
+
+        const result = await Book.findByIdAndUpdate(id)
+
+        if(!result){
+            return res.status(404).send({ message: 'Book not Found.' })
+        }
+
+        return res.status(200).send({ message: 'Book is updated successfully.' })
+
+    } catch (error: unknown) {
+        console.log('something went wrong to update data ' + (error as Error).message)
+        res.status(500).send({ message: (error as Error).message})
+    }
+})
+
+// Route delete a book
+
+app.delete('/books/:id',async(req,res): PromiseExpress => {
+    try {
+        const { id } = req.params;
+
+        const result = await Book.findByIdAndDelete(id)
+        if(!result){
+            return res.status(404).send({ message: 'Book not Found.' })
+        }
+        return res.status(200).send({ message: 'Book is deleted successfully.' })
+    } catch (error: unknown) {
+        console.log((error as Error).message)
+        res.status(500).send({ message: (error as Error).message })
+    }
+})
